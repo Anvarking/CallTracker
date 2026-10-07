@@ -69,6 +69,11 @@ def admin_required(func):
         if "user" not in session:
             return redirect("/login")
         if session.get("role") != "admin":
+            app.logger.warning(
+                f"Попытка доступа без прав: "
+                f"пользователь={session.get('user')}, "
+                f"endpoint={request.endpoint}"
+            )
             flash(
                 "❌ У вас нет прав для выполнения этого действия.",
                 "danger"
@@ -208,6 +213,10 @@ def add_user():
             return render_template(
                 "add_user.html"
             )
+        app.logger.info(
+            f"Администратор {session['user']} создал пользователя: "
+            f"username={username}, role={role}"
+        )
         flash(
             f"✅ Пользователь {username} создан.",
             "success"
@@ -220,7 +229,18 @@ def add_user():
 @app.route("/users/toggle/<int:id>", methods=["POST"])
 @admin_required
 def toggle_user(id):
+    user = get_user_by_id(id)
+    if not user:
+        flash(
+            "❌ Пользователь не найден.",
+            "danger"
+        )
+        return redirect("/users")
     toggle_user_status(id)
+    app.logger.info(
+        f"Администратор {session['user']} изменил статус пользователя: "
+        f"username={user[1]}, id={id}"
+    )
     flash(
         "✅ Статус пользователя изменён.",
         "success"
@@ -246,6 +266,10 @@ def remove_user(id):
             )
             return redirect("/users")
     delete_user(id)
+    app.logger.info(
+        f"Администратор {session['user']} удалил пользователя: "
+        f"username={user[1]}, id={id}, role={user[2]}"
+    )
     flash(
         "✅ Пользователь удалён.",
         "success"
@@ -319,6 +343,11 @@ def edit_user(id):
                 "edit_user.html",
                 user=user
             )
+        app.logger.info(
+            f"Администратор {session['user']} изменил пользователя: "
+            f"id={id}, old_username={user[1]}, "
+            f"new_username={username}, role={role}"
+        )
         flash(
             "✅ Пользователь успешно изменён.",
             "success"
@@ -331,6 +360,11 @@ def edit_user(id):
 
 @app.route("/logout")
 def logout():
+    username = session.get("user")
+    if username:
+        app.logger.info(
+            f"Пользователь вышел из системы: {username}"
+        )
     session.clear()
     flash(
         "👋 Вы вышли из системы.",
@@ -372,6 +406,10 @@ def add():
                 "warning"
             )
             return render_template("add.html")
+        app.logger.info(
+            f"Пользователь {session['user']} добавил запись: "
+            f"date={date}, plan={plan}, fact={fact}"
+        )
         flash("✅ Запись успешно добавлена.", "success")
         return redirect("/")
     return render_template("add.html")
@@ -417,7 +455,12 @@ def edit(id):
                 record=record
             )
         # Обновляем запись
+        # Обновляем запись
         update_plan_and_fact_by_id(id, plan, fact)
+        app.logger.info(
+            f"Пользователь {session['user']} изменил запись: "
+            f"id={id}, plan={plan}, fact={fact}"
+        )
         flash(
             "✅ Запись успешно изменена.",
             "success"
@@ -433,6 +476,10 @@ def edit(id):
 def delete(id):
     if request.method == "POST":
         delete_record_by_id(id)
+        app.logger.info(
+            f"Пользователь {session['user']} удалил запись: "
+            f"id={id}"
+        )
         return redirect("/")
     record = get_record_by_id(id)
     return render_template("delete.html", record=record)
