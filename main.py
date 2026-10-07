@@ -32,11 +32,28 @@ from database import (get_records,
                       update_user,
                       get_user_by_id,
                       get_admin_count)
-
 from config import Config
+import logging
+from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Logging
+if not app.debug:
+    handler = RotatingFileHandler(
+        "logs/calltracker.log",
+        maxBytes=10240,
+        backupCount=5
+    )
+    handler.setFormatter(
+        logging.Formatter(
+            "%(asctime)s %(levelname)s: %(message)s"
+        )
+    )
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
+app.logger.setLevel(logging.INFO)
 
 def login_required(func):
     @wraps(func)
@@ -123,6 +140,9 @@ def login():
             session["user_id"] = user[0]
             session["user"] = user[1]
             session["role"] = user[4]
+            app.logger.info(
+                f"Пользователь вошёл в систему: {username}"
+            )
             flash(
                 "✅ Добро пожаловать!",
                 "success"
