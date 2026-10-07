@@ -1,7 +1,5 @@
 from werkzeug.security import check_password_hash
 from functools import wraps
-import os
-from dotenv import load_dotenv
 import csv
 from io import BytesIO, StringIO
 from flask import (
@@ -35,10 +33,10 @@ from database import (get_records,
                       get_user_by_id,
                       get_admin_count)
 
-load_dotenv()
+from config import Config
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
+app.config.from_object(Config)
 
 def login_required(func):
     @wraps(func)
