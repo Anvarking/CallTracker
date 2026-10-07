@@ -1,0 +1,1172 @@
+{% extends "base.html" %}
+
+{% block title %}
+    CallTracker — Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- ================================================== -->
+<!-- Dashboard Header -->
+<!-- ================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="dashboard-title mb-1">
+            📊 Dashboard
+        </h2>
+
+        <p class="dashboard-subtitle mb-0">
+            Контроль ежедневной производительности
+        </p>
+
+    </div>
+
+
+    <div class="d-none d-md-block">
+
+        <a
+            href="/add"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-plus-lg"></i>
+            Новая запись
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- Period Filter -->
+<!-- ================================================== -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex align-items-center mb-3">
+
+            <i class="bi bi-calendar3 me-2 fs-5"></i>
+
+            <h5 class="section-title mb-0">
+                Период
+            </h5>
+
+        </div>
+
+
+        <form
+            method="GET"
+            action="/"
+            class="row g-3"
+        >
+
+            <input
+                type="hidden"
+                name="period"
+                value="custom"
+            >
+
+
+            <!-- Date from -->
+
+            <div class="col-md-4">
+
+                <label
+                    for="date_from"
+                    class="form-label"
+                >
+                    От
+                </label>
+
+                <input
+                    type="date"
+                    id="date_from"
+                    name="date_from"
+                    class="form-control"
+                    value="{{ date_from or '' }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Date to -->
+
+            <div class="col-md-4">
+
+                <label
+                    for="date_to"
+                    class="form-label"
+                >
+                    До
+                </label>
+
+                <input
+                    type="date"
+                    id="date_to"
+                    name="date_to"
+                    class="form-control"
+                    value="{{ date_to or '' }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Buttons -->
+
+            <div class="col-md-4 d-flex align-items-end gap-2">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Показать
+                </button>
+
+
+                <a
+                    href="/"
+                    class="btn btn-outline-secondary"
+                >
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Весь период
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- Selected Period -->
+<!-- ================================================== -->
+
+{% if period == "custom" %}
+
+<div class="alert alert-light border shadow-sm">
+
+    <i class="bi bi-calendar-check me-2"></i>
+
+    Показаны данные за период:
+
+    <strong>
+        {{ date_from }}
+    </strong>
+
+    —
+
+    <strong>
+        {{ date_to }}
+    </strong>
+
+</div>
+
+{% else %}
+
+<div class="alert alert-light border shadow-sm">
+
+    <i class="bi bi-calendar-range me-2"></i>
+
+    Показаны данные за
+    <strong>весь период</strong>.
+
+</div>
+
+{% endif %}
+
+
+<!-- ================================================== -->
+<!-- Export -->
+<!-- ================================================== -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h5 class="section-title mb-1">
+
+                    <i class="bi bi-download me-2"></i>
+
+                    Экспорт данных
+
+                </h5>
+
+
+                <p class="text-muted mb-0 small">
+
+                    Скачать данные выбранного периода
+
+                </p>
+
+            </div>
+
+
+            <div class="d-flex gap-2">
+
+                <!-- CSV -->
+
+                <a
+                    href="/export/csv?period={{ period }}&date_from={{ date_from or '' }}&date_to={{ date_to or '' }}"
+                    class="btn btn-outline-secondary"
+                >
+
+                    <i class="bi bi-filetype-csv me-1"></i>
+
+                    CSV
+
+                </a>
+
+
+                <!-- Excel -->
+
+                <a
+                    href="/export/excel?period={{ period }}&date_from={{ date_from or '' }}&date_to={{ date_to or '' }}"
+                    class="btn btn-outline-success"
+                >
+
+                    <i class="bi bi-file-earmark-excel me-1"></i>
+
+                    Excel
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- Progress -->
+<!-- ================================================== -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+
+        <div class="d-flex align-items-center mb-4">
+
+            <i class="bi bi-graph-up-arrow me-2 fs-4"></i>
+
+            <h4 class="section-title mb-0">
+                Прогресс периода
+            </h4>
+
+        </div>
+
+
+        <!-- Main percentage -->
+
+        <div class="text-center mb-4">
+
+            <div class="display-4 fw-bold">
+
+                {{ progress[2] }}%
+
+            </div>
+
+
+            <div class="text-muted">
+
+                Общее выполнение плана
+
+            </div>
+
+        </div>
+
+
+        <!-- Progress bar -->
+
+        <div
+            class="progress mb-4"
+            style="height: 30px;"
+        >
+
+            <div
+                class="progress-bar
+                {% if progress[2] >= 100 %}
+                    bg-success
+                {% elif progress[2] >= 80 %}
+                    bg-warning
+                {% else %}
+                    bg-danger
+                {% endif %}"
+
+                role="progressbar"
+
+                style="width:
+                {% if progress[2] > 100 %}
+                    100
+                {% else %}
+                    {{ progress[2] }}
+                {% endif %}%"
+            >
+
+                {{ progress[2] }}%
+
+            </div>
+
+        </div>
+
+
+        <!-- Progress details -->
+
+        <div class="row text-center">
+
+
+            <!-- Plan -->
+
+            <div class="col-6 col-md-3 mb-3 mb-md-0">
+
+                <div class="text-muted small">
+                    🎯 План
+                </div>
+
+                <div class="fs-3 fw-bold">
+                    {{ progress[0] }}
+                </div>
+
+            </div>
+
+
+            <!-- Fact -->
+
+            <div class="col-6 col-md-3 mb-3 mb-md-0">
+
+                <div class="text-muted small">
+                    📞 Факт
+                </div>
+
+                <div class="fs-3 fw-bold">
+                    {{ progress[1] }}
+                </div>
+
+            </div>
+
+
+            <!-- Completed -->
+
+            <div class="col-6 col-md-3">
+
+                <div class="text-muted small">
+
+                    <span class="text-success">
+                        ✓
+                    </span>
+
+                    Выполнено
+
+                </div>
+
+                <div class="fs-3 fw-bold text-success">
+
+                    {{ completed_days }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Failed -->
+
+            <div class="col-6 col-md-3">
+
+                <div class="text-muted small">
+
+                    <span class="text-danger">
+                        ✕
+                    </span>
+
+                    Не выполнено
+
+                </div>
+
+                <div class="fs-3 fw-bold text-danger">
+
+                    {{ failed_days }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- Statistics -->
+<!-- ================================================== -->
+
+<div class="row g-3 mb-4">
+
+
+    <!-- Working days -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="stat-title">
+
+                    <i class="bi bi-calendar-check"></i>
+
+                    Рабочих дней
+
+                </div>
+
+
+                <div class="stat-value">
+
+                    {{ statistics[0] }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Total plan -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="stat-title">
+
+                    <i class="bi bi-bullseye"></i>
+
+                    Общий план
+
+                </div>
+
+
+                <div class="stat-value">
+
+                    {{ statistics[1] }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Total fact -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="stat-title">
+
+                    <i class="bi bi-telephone"></i>
+
+                    Общий факт
+
+                </div>
+
+
+                <div class="stat-value">
+
+                    {{ statistics[2] }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Average percentage -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="stat-title">
+
+                    <i class="bi bi-percent"></i>
+
+                    Среднее выполнение
+
+                </div>
+
+
+                <div class="stat-value">
+
+                    {{ statistics[5] }}%
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Completed -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="stat-title">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Выполнено дней
+
+                </div>
+
+
+                <div class="stat-value text-success">
+
+                    {{ completed_days }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Failed -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="stat-title">
+
+                    <i class="bi bi-x-circle"></i>
+
+                    Не выполнено
+
+                </div>
+
+
+                <div class="stat-value text-danger">
+
+                    {{ failed_days }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Difference -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+
+                {% if statistics[3] > 0 %}
+
+                    <div class="stat-title text-success">
+
+                        <i class="bi bi-arrow-up-circle"></i>
+
+                        Общая разница
+
+                    </div>
+
+
+                    <div class="stat-value text-success">
+
+                        +{{ statistics[3] }}
+
+                    </div>
+
+
+                {% elif statistics[3] < 0 %}
+
+                    <div class="stat-title text-danger">
+
+                        <i class="bi bi-arrow-down-circle"></i>
+
+                        Общая разница
+
+                    </div>
+
+
+                    <div class="stat-value text-danger">
+
+                        {{ statistics[3] }}
+
+                    </div>
+
+
+                {% else %}
+
+                    <div class="stat-title">
+
+                        <i class="bi bi-dash-circle"></i>
+
+                        Общая разница
+
+                    </div>
+
+
+                    <div class="stat-value">
+
+                        0
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Status -->
+
+    <div class="col-6 col-md-3">
+
+        <div class="card stat-card shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="stat-title">
+
+                    <i class="bi bi-activity"></i>
+
+                    Статус
+
+                </div>
+
+
+                {% if progress[2] >= 100 %}
+
+                    <div class="stat-value text-success">
+
+                        Отлично
+
+                    </div>
+
+
+                {% elif progress[2] >= 80 %}
+
+                    <div class="stat-value text-warning">
+
+                        Нормально
+
+                    </div>
+
+
+                {% else %}
+
+                    <div class="stat-value text-danger">
+
+                        Внимание
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- Chart -->
+<!-- ================================================== -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+
+        <div class="d-flex align-items-center mb-3">
+
+            <i class="bi bi-bar-chart-line me-2 fs-4"></i>
+
+            <h4 class="section-title mb-0">
+
+                План и факт по дням
+
+            </h4>
+
+        </div>
+
+
+        <div style="height: 350px;">
+
+            <canvas id="performanceChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- Records Table -->
+<!-- ================================================== -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+            <div class="d-flex align-items-center">
+
+                <i class="bi bi-table me-2 fs-4"></i>
+
+                <h4 class="section-title mb-0">
+
+                    Ежедневные показатели
+
+                </h4>
+
+            </div>
+
+
+            <span class="badge bg-secondary">
+
+                {{ records|length }} записей
+
+            </span>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Дата
+                        </th>
+
+                        <th>
+                            План
+                        </th>
+
+                        <th>
+                            Факт
+                        </th>
+
+                        <th>
+                            Разница
+                        </th>
+
+                        <th>
+                            Выполнение
+                        </th>
+
+                        <th class="text-end">
+                            Действия
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for record in records %}
+
+
+                    <tr
+
+                        {% if record[2] == 0 %}
+
+                            class="table-secondary"
+
+                        {% elif record[5] >= 100 %}
+
+                            class="table-success"
+
+                        {% else %}
+
+                            class="table-danger"
+
+                        {% endif %}
+
+                    >
+
+
+                        <!-- ID -->
+
+                        <td>
+
+                            {{ record[0] }}
+
+                        </td>
+
+
+                        <!-- Date -->
+
+                        <td class="fw-semibold">
+
+                            {{ record[1] }}
+
+                        </td>
+
+
+                        <!-- Plan -->
+
+                        <td>
+
+                            {{ record[2] }}
+
+                        </td>
+
+
+                        <!-- Fact -->
+
+                        <td>
+
+                            {{ record[3] }}
+
+                        </td>
+
+
+                        <!-- Difference -->
+
+                        <td>
+
+
+                            {% if record[4] > 0 %}
+
+                                <span class="text-success fw-semibold">
+
+                                    +{{ record[4] }}
+
+                                </span>
+
+
+                            {% elif record[4] < 0 %}
+
+                                <span class="text-danger fw-semibold">
+
+                                    {{ record[4] }}
+
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    0
+
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+                        <!-- Percentage -->
+
+                        <td>
+
+
+                            {% if record[2] == 0 %}
+
+                                <span class="badge bg-secondary">
+
+                                    Выходной
+
+                                </span>
+
+
+                            {% elif record[5] >= 100 %}
+
+                                <span class="badge bg-success">
+
+                                    <i class="bi bi-check-lg"></i>
+
+                                    {{ record[5] }}%
+
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    <i class="bi bi-exclamation-lg"></i>
+
+                                    {{ record[5] }}%
+
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+                        <!-- Actions -->
+
+                        <td class="text-end">
+
+
+                            <div class="d-flex justify-content-end gap-1">
+
+
+                                <a
+                                    href="/edit/{{ record[0] }}"
+                                    class="btn btn-warning btn-sm"
+                                    title="Изменить"
+                                >
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </a>
+
+                           {% if session.get("role") == "admin" %}
+                                <a
+                                    href="/delete/{{ record[0] }}"
+                                    class="btn btn-danger btn-sm"
+                                    title="Удалить"
+                                >
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            {% endif %}
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <!-- Empty -->
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="text-center text-muted py-5"
+                        >
+
+                            <i
+                                class="bi bi-inbox fs-1 d-block mb-3"
+                            ></i>
+
+                            Нет записей за выбранный период.
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- Chart.js -->
+<!-- ================================================== -->
+
+<script>
+
+
+    const chartData = {{ chart_data | tojson }};
+
+
+    const labels = chartData.map(row => {
+
+        return new Date(
+            row[0]
+        ).toLocaleDateString("ru-RU");
+
+    });
+
+
+    const planData = chartData.map(row => row[1]);
+
+
+    const factData = chartData.map(row => row[2]);
+
+
+    const ctx = document.getElementById(
+        "performanceChart"
+    );
+
+
+    new Chart(ctx, {
+
+        type: "line",
+
+
+        data: {
+
+            labels: labels,
+
+
+            datasets: [
+
+                {
+
+                    label: "План",
+
+                    data: planData,
+
+                    tension: 0.3,
+
+                    borderWidth: 2,
+
+                    pointRadius: 4,
+
+                    pointHoverRadius: 6
+
+                },
+
+
+                {
+
+                    label: "Факт",
+
+                    data: factData,
+
+                    tension: 0.3,
+
+                    borderWidth: 2,
+
+                    pointRadius: 4,
+
+                    pointHoverRadius: 6
+
+                }
+
+            ]
+
+        },
+
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+
+            interaction: {
+
+                mode: "index",
+
+                intersect: false
+
+            },
+
+
+            plugins: {
+
+                legend: {
+
+                    position: "top"
+
+                }
+
+            },
+
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+</script>
+
+
+{% endblock %}
+```

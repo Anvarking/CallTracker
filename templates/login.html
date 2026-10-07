@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Вход — CallTracker
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+
+    <div class="col-md-5 col-lg-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+
+                    <i class="bi bi-bar-chart-fill fs-1 text-primary"></i>
+
+                    <h3 class="fw-bold mt-2">
+                        CallTracker
+                    </h3>
+
+                    <p class="text-muted">
+                        Вход в систему
+                    </p>
+
+                </div>
+
+
+                <form method="POST">
+
+                    <div class="mb-3">
+
+                        <label
+                            for="username"
+                            class="form-label"
+                        >
+                            Логин
+                        </label>
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            class="form-control"
+                            placeholder="Введите логин"
+                            required
+                            autofocus
+                        >
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label
+                            for="password"
+                            class="form-label"
+                        >
+                            Пароль
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Введите пароль"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+
+                        Войти
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}
+    CallTracker — Изменить запись
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-7 col-xl-6">
+
+
+        <!-- Header -->
+
+        <div class="mb-4">
+
+            <a
+                href="/"
+                class="text-decoration-none text-muted"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Вернуться в Dashboard
+            </a>
+
+            <h2 class="dashboard-title mt-3 mb-1">
+                ✏️ Изменить запись
+            </h2>
+
+            <p class="dashboard-subtitle mb-0">
+                Обновите план или фактический результат
+            </p>
+
+        </div>
+
+
+        <!-- Current date -->
+
+        <div class="alert alert-light border shadow-sm">
+
+            <i class="bi bi-calendar-check me-2"></i>
+
+            Дата:
+
+            <strong>
+                {{ record[1] }}
+            </strong>
+
+        </div>
+
+
+        <!-- Form -->
+
+        <div class="card shadow-sm">
+
+            <div class="card-body p-4 p-md-5">
+
+                <form method="POST">
+
+
+                    <!-- Plan -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="plan"
+                            class="form-label fw-semibold"
+                        >
+                            <i class="bi bi-bullseye me-1"></i>
+                            План
+                        </label>
+
+                        <input
+                            type="number"
+                            id="plan"
+                            name="plan"
+                            class="form-control form-control-lg"
+                            min="0"
+                            value="{{ record[2] }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Fact -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="fact"
+                            class="form-label fw-semibold"
+                        >
+                            <i class="bi bi-telephone me-1"></i>
+                            Факт
+                        </label>
+
+                        <input
+                            type="number"
+                            id="fact"
+                            name="fact"
+                            class="form-control form-control-lg"
+                            min="0"
+                            value="{{ record[3] }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Current values -->
+
+                    <div class="alert alert-light border mb-4">
+
+                        <div class="small text-muted mb-2">
+                            Текущие значения
+                        </div>
+
+                        <div class="d-flex gap-4">
+
+                            <div>
+                                <span class="text-muted">
+                                    План:
+                                </span>
+
+                                <strong>
+                                    {{ record[2] }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span class="text-muted">
+                                    Факт:
+                                </span>
+
+                                <strong>
+                                    {{ record[3] }}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+
+                    <div class="d-flex gap-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-warning btn-lg flex-grow-1"
+                        >
+                            <i class="bi bi-check-lg"></i>
+                            Сохранить изменения
+                        </button>
+
+
+                        <a
+                            href="/"
+                            class="btn btn-outline-secondary btn-lg"
+                        >
+                            Отмена
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

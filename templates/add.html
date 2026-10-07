@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}
+    CallTracker — Добавить запись
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-7 col-xl-6">
+
+
+        <!-- Header -->
+
+        <div class="mb-4">
+
+            <a
+                href="/"
+                class="text-decoration-none text-muted"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Вернуться в Dashboard
+            </a>
+
+            <h2 class="dashboard-title mt-3 mb-1">
+                ➕ Новая запись
+            </h2>
+
+            <p class="dashboard-subtitle mb-0">
+                Добавьте показатели за рабочий день
+            </p>
+
+        </div>
+
+
+        <!-- Form Card -->
+
+        <div class="card shadow-sm">
+
+            <div class="card-body p-4 p-md-5">
+
+                <form method="POST">
+
+
+                    <!-- Date -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="date"
+                            class="form-label fw-semibold"
+                        >
+                            <i class="bi bi-calendar3 me-1"></i>
+                            Дата
+                        </label>
+
+                        <input
+                            type="date"
+                            id="date"
+                            name="date"
+                            class="form-control form-control-lg"
+                            required
+                        >
+
+                        <div class="form-text">
+                            Выберите дату выполнения работы.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Plan -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="plan"
+                            class="form-label fw-semibold"
+                        >
+                            <i class="bi bi-bullseye me-1"></i>
+                            План
+                        </label>
+
+                        <input
+                            type="number"
+                            id="plan"
+                            name="plan"
+                            class="form-control form-control-lg"
+                            min="0"
+                            placeholder="Например: 130"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Fact -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="fact"
+                            class="form-label fw-semibold"
+                        >
+                            <i class="bi bi-telephone me-1"></i>
+                            Факт
+                        </label>
+
+                        <input
+                            type="number"
+                            id="fact"
+                            name="fact"
+                            class="form-control form-control-lg"
+                            min="0"
+                            placeholder="Например: 145"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Weekend info -->
+
+                    <div class="alert alert-light border mb-4">
+
+                        <i class="bi bi-info-circle me-2"></i>
+
+                        <strong>Автоматический выходной:</strong>
+
+                        <div class="small text-muted mt-1">
+
+                            Если выбранная дата приходится на субботу
+                            или воскресенье, план и факт автоматически
+                            сохранятся как <strong>0 / 0</strong>.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+
+                    <div class="d-flex gap-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-lg flex-grow-1"
+                        >
+                            <i class="bi bi-check-lg"></i>
+                            Добавить запись
+                        </button>
+
+
+                        <a
+                            href="/"
+                            class="btn btn-outline-secondary btn-lg"
+                        >
+                            Отмена
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
+```
