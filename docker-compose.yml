@@ -1,0 +1,14 @@
+services:
+  calltracker:
+    image: calltracker:1.0
+    container_name: calltracker
+    restart: unless-stopped
+
+    ports:
+      - "8001:8000"
+
+    env_file:
+      - .env.docker
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

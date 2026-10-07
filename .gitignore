@@ -10,6 +10,7 @@ __pycache__/
 
 # Environment variables
 .env
+.env.docker
 
 # OS files
 .DS_Store
@@ -18,3 +19,4 @@ Thumbs.db
 # Application logs
 logs/
 *.log
+
