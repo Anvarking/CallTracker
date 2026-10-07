@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Ошибка сервера — CallTracker{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+```
+<div class="card shadow-sm text-center p-5" style="max-width: 600px; width: 100%;">
+    <div class="mb-3">
+        <i class="bi bi-exclamation-triangle text-danger"
+           style="font-size: 5rem;">
+        </i>
+    </div>
+    <h1 class="display-3 fw-bold mb-2">
+        500
+    </h1>
+    <h2 class="mb-3">
+        Внутренняя ошибка сервера
+    </h2>
+    <p class="text-muted mb-4">
+        Что-то пошло не так.
+        Ошибка уже записана в журнал приложения.
+    </p>
+    <a href="/" class="btn btn-primary px-4">
+        <i class="bi bi-house me-1"></i>
+        Вернуться на Dashboard
+    </a>
+</div>
+```
+</div>
+{% endblock %}

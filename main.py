@@ -1,5 +1,6 @@
 from werkzeug.security import check_password_hash
 from functools import wraps
+from werkzeug.exceptions import HTTPException
 import csv
 from io import BytesIO, StringIO
 from flask import (
@@ -38,6 +39,22 @@ from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    app.logger.warning(
+        f"Страница не найдена: {request.path}"
+    )
+    return render_template("404.html"), 404
+
+@app.errorhandler(Exception)
+def handle_exception(error):
+    if isinstance(error, HTTPException):
+        return error
+    app.logger.exception(
+        "Необработанная ошибка приложения"
+    )
+    return render_template("500.html"), 500
 
 # Logging
 if not app.debug:
